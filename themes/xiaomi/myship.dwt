@@ -1,0 +1,343 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Keywords" content="{$keywords}" />
+<meta name="Description" content="{$description}" />
+<!-- TemplateBeginEditable name="doctitle" -->
+<title>{$page_title}</title>
+<!-- TemplateEndEditable --><!-- TemplateBeginEditable name="head" --><!-- TemplateEndEditable -->
+<link rel="shortcut icon" href="favicon.ico" />
+<link rel="icon" href="animated_favicon.gif" type="image/gif" />
+<link href="{$ecs_css_path}" rel="stylesheet" type="text/css" />
+<link href="common.css" rel="stylesheet" type="text/css" />
+{* 包含脚本文件 *}
+{insert_scripts files='common.js,myship.js'}
+</head>
+<body><!-- #BeginLibraryItem "/library/page_header.lbi" -->
+{insert_scripts files='jquery-1.9.1.min.js,jquery.json.js'}
+{insert_scripts files='transport_jquery.js,utils.js,jquery.SuperSlide.js,xiaomi_common.js'}
+<script type="text/javascript">
+    {literal}
+    <!--
+    function checkSearchForm()
+    {
+        if(document.getElementById('keyword').value)
+        {
+            return true;
+        }
+        else
+        {
+            alert("{$lang.no_keywords}");
+            return false;
+        }
+    }
+    -->
+    {/literal}
+    </script>
+<div class="site-topbar">
+	<div class="container">
+    	<!--{if $navigator_list.top}-->
+    	<div class="topbar-nav">
+        	<!-- {foreach name=nav_top_list from=$navigator_list.top item=nav} -->
+            <a href="{$nav.url}" <!-- {if $nav.opennew eq 1} --> target="_blank" <!-- {/if} --> class="snc-link snc-order">{$nav.name}</a>
+            <!-- {if !$smarty.foreach.nav_top_list.last} --><span class="sep">|</span><!-- {/if} -->
+            <!-- {/foreach} -->
+        </div>
+        <!-- {/if} -->
+        <div class="topbar-cart" id="ECS_CARTINFO">
+            {insert name='cart_info'}
+        </div>
+        <div class="topbar-info J_userInfo" id="ECS_MEMBERZONE">
+        	{* ECSHOP 提醒您：根据用户id来调用member_info.lbi显示不同的界面  *}{insert name='member_info'}
+        </div>
+    </div>
+</div>
+<div class="site-header" style="clear:both;">
+	<div class="container">
+    	<div class="header-logo">
+        	<a href="library/index.php" title="{$shop_name}"><img src="images/logo.gif" /></a>
+        </div>
+        <div class="header-nav">
+        	<ul class="nav-list">
+            	<li class="nav-category">
+                	<a class="btn-category-list" href="library/catalog.php" {if $script_name eq 'index'}style="display:none;"{/if}>全部商品分类</a>
+                	<div class="site-category {if $script_name neq 'index'}category-hidden{/if}">
+                    	<ul class="site-category-list clearfix" id="site-category-list">
+                            <!--{foreach from=$categories item=cat name=foo}-->
+                        	<li class="category-item">
+                            	<a class="title" href="{$cat.url}">{$cat.name|escape:html}<i class="iconfont"></i></a>
+                                <div class="children clearfix">
+                                	<!--{foreach from=$cat.cat_id item=child name=no1}-->
+                                    <!--{if $smarty.foreach.no1.iteration %6 ==1}-->
+                                	<ul class="children-list">
+                                    <!--{/if}-->
+                                    	<li>
+                                        	<a href="{$child.url}" class="link">
+                                            	<img class="thumb" src="data/catthumb/{$child.thumb}" width="40" height="40">
+                                            	<span>{$child.name|escape:html}</span>
+                                            </a>
+                                        </li>
+                                    <!--{if $smarty.foreach.no1.iteration % 6 == 0 || $smarty.foreach.no1.last}-->
+                                    </ul>
+                                    <!--{/if}-->
+                                    <!--{/foreach}-->
+                                </div>
+                            </li>
+                            <!--{/foreach}-->
+                        </ul>
+                    </div>
+                </li>
+                <!-- {foreach name=nav_middle_list from=$navigator_list.middle item=nav} -->
+            	<li class="nav-item">
+                	<a class="link" href="{$nav.url}" {if $nav.opennew eq 1}target="_blank"{/if} {if $nav.active eq 1} class="current"{/if}><span>{$nav.name}</span></a>
+                    <!-- {if $nav.cat_list}-->
+                    <div class='item-children'>
+                    	<div class="container">
+                        	<ul class="children-list clearfix">
+                            	<!--{foreach from=$nav.goods item=cat name=cat}-->
+                                    <!-- {if $smarty.foreach.cat.iteration<7}-->
+                                    <!--{foreach from=$cat.goods item=good name=good}-->
+                                    <!-- {if $smarty.foreach.good.iteration==1}-->
+                                    <li class="first">
+                                        <div class="figure figure-thumb"><a href="{$good.url}"><img src="{$good.thumb|escape:html}"  alt="{$good.name|escape:html}"></a></div>
+                                        <div class="title"><a href="{$good.url}">{$good.name|escape:html}</a></div>
+                                        <p class="price">{$good.shop_price}元</p>
+                                    </li>
+                                    <!-- {/if} -->
+                                    <!--{/foreach}-->
+                                    <!-- {/if} -->
+                                <!--{/foreach}-->
+                            </ul>
+                    	</div>
+                    </div>
+                    <!-- {/if}-->
+                </li>
+                <!-- {/foreach} -->
+            </ul>
+        </div>
+        <div class="header-search">
+        	<form action="library/search.php" method="get" id="searchForm" name="searchForm" onSubmit="return checkSearchForm()" class="search-form clearfix">
+            	<label class="hide">站内搜索</label>
+        		<input class="search-text" type="text" name="keywords" id="keyword" value="{$search_keywords|escape}" autocomplete="off">
+        		<input type="hidden" value="k1" name="dataBi">
+        		<button type="submit" class="search-btn iconfont"></button>
+                {if $searchkeywords}
+                <div class="hot-words" {if $search_keywords}style="display:none"{/if}>
+                	{foreach from=$searchkeywords item=val} <a href="search.php?keywords={$val|escape:url}" target="_blank">{$val}</a> {/foreach}
+                </div>
+                {/if}
+      		</form>
+        </div>
+    </div>
+	<div id="J_navMenu" class="header-nav-menu" style="display: none;">
+    	<div class="container"></div>
+    </div>
+</div>
+
+<!-- #EndLibraryItem --><div id="wrapper" class="container">
+  <div class="box common_main" style="margin-top:10px;">
+     <div class="box_1" style="padding:20px;">
+  <h5><span>{$lang.shipping_method}</span></h5>
+  <div class="blank"></div>
+  <!-- 开始收货人信息填写界面 -->
+      {insert_scripts files='region.js,utils.js'}
+      <script type="text/javascript">
+        region.isAdmin = false;
+        {foreach from=$lang.flow_js item=item key=key}
+        var {$key} = "{$item}";
+        {/foreach}
+
+        {literal}
+        onload = function() {
+          if (!document.all)
+          {
+            document.forms['theForm'].reset();
+          }
+        }
+
+        /* $Id : myship.js 4865 2007-01-31 14:04:10Z Hackfan $ */
+
+/* *
+ * 检查收货地址信息表单中填写的内容
+ */
+function checkForm(frm)
+{
+  var msg = new Array();
+  var err = false;
+
+  if (frm.elements['country'].value == 0)
+  {
+    msg.push(country_not_null);
+    err = true;
+  }
+
+  if (frm.elements['province'].value == 0 && frm.elements['province'].length > 1)
+  {
+    err = true;
+    msg.push(province_not_null);
+  }
+
+  if (frm.elements['city'].value == 0 && frm.elements['city'].length > 1)
+  {
+    err = true;
+    msg.push(city_not_null);
+  }
+
+  if (frm.elements['district'].length > 1)
+  {
+    if (frm.elements['district'].value == 0)
+    {
+      err = true;
+      msg.push(district_not_null);
+    }
+  }
+
+  if (err)
+  {
+    message = msg.join("\n");
+    alert(message);
+  }
+  return ! err;
+}
+
+        {/literal}
+      </script>
+<form action="myship.php" method="post" name="theForm" id="theForm" onsubmit="return checkForm(this)"><!-- #BeginLibraryItem "/Library/myship.lbi" -->
+{insert_scripts files='utils.js,transport_jquery.js'}
+<table width="100%" border="0" cellpadding="5" cellspacing="1" bgcolor="#dddddd">
+  <tr>
+    <td bgcolor="#ffffff">
+      {$lang.country_province}:
+      <select name="country" id="selCountries_{$sn}" onchange="region.changed(this, 1, 'selProvinces_{$sn}')" style="border:1px solid #ccc;">
+        <option value="0">{$lang.please_select}</option>
+        <!-- {foreach from=$country_list item=country} -->
+        <option value="{$country.region_id}" {if $choose.country eq $country.region_id}selected{/if}>{$country.region_name}</option>
+        <!-- {/foreach} -->
+      </select>
+      <select name="province" id="selProvinces_{$sn}" onchange="region.changed(this, 2, 'selCities_{$sn}')" style="border:1px solid #ccc;">
+        <option value="0">{$lang.please_select}</option>
+        <!-- {foreach from=$province_list.$sn item=province} -->
+        <option value="{$province.region_id}" {if $choose.province eq $province.region_id}selected{/if}>{$province.region_name}</option>
+        <!-- {/foreach} -->
+      </select>
+      <select name="city" id="selCities_{$sn}" onchange="region.changed(this, 3, 'selDistricts_{$sn}')" style="border:1px solid #ccc;">
+        <option value="0">{$lang.please_select}</option>
+        <!-- {foreach from=$city_list.$sn item=city} -->
+        <option value="{$city.region_id}" {if $choose.city eq $city.region_id}selected{/if}>{$city.region_name}</option>
+        <!-- {/foreach} -->
+      </select>
+      <select name="district" id="selDistricts_{$sn}" {if !$district_list.$sn}style="display:none"{/if} style="border:1px solid #ccc;">
+        <option value="0">{$lang.please_select}</option>
+        <!-- {foreach from=$district_list.$sn item=district} -->
+        <option value="{$district.region_id}" {if $choose.district eq $district.region_id}selected{/if}>{$district.region_name}</option>
+        <!-- {/foreach} -->
+      </select> <input type="submit" name="Submit" class="bnt_blue_2"  value="{$lang.search_ship}" />
+      <input type="hidden" name="act" value="viewship" />
+    </td>
+  </tr>
+</table>
+
+<table width="100%" border="0" cellpadding="5" cellspacing="1" bgcolor="#dddddd">
+  <tr>
+    <th width="20%" bgcolor="#ffffff">{$lang.name}</th>
+    <th bgcolor="#ffffff">{$lang.describe}</th>
+    <th width="40%" bgcolor="#ffffff">{$lang.fee}</th>
+    <th width="15%" bgcolor="#ffffff">{$lang.insure_fee}</th>
+  </tr>
+  <!-- {foreach from=$shipping_list item=shipping} 循环配送方式 -->
+  <tr>
+    <td valign="top" bgcolor="#ffffff" align="center"><strong>{$shipping.shipping_name}</strong></td>
+    <td valign="top" bgcolor="#ffffff" >{$shipping.shipping_desc}</td>
+    <td valign="top" bgcolor="#ffffff" align="center">{$shipping.fee}</td>
+    <td align="center" valign="top" bgcolor="#ffffff">
+      <!-- {if $shipping.insure neq 0} -->
+      {$shipping.insure_formated}
+      <!-- {else} -->
+      {$lang.not_support_insure}
+      <!-- {/if} -->    </td>
+  </tr>
+  <!-- {/foreach} 循环配送方式 -->
+</table><!-- #EndLibraryItem --></form>
+    </div>
+    </div>
+</div>
+<div class="blank5"></div><!-- #BeginLibraryItem "/library/page_footer.lbi" -->
+<div class="site-footer">
+	<div class="container">
+    	<div class="footer-service">
+        	<ul class="list-service clearfix">
+            	<li>
+                	<a rel="nofollow" href="javascript:void(0)">
+                    	<i class="iconfont"></i>1小时快修服务
+                    </a>
+                </li>
+            	<li>
+                	<a rel="nofollow" href="javascript:void(0)">
+                    	<i class="iconfont"></i>7天无理由退货
+                    </a>
+                </li>
+            	<li>
+                	<a rel="nofollow" href="javascript:void(0)">
+                    	<i class="iconfont"></i>15天免费换货
+                    </a>
+                </li>
+            	<li>
+                	<a rel="nofollow" href="javascript:void(0)">
+                    	<i class="iconfont"></i>满150元包邮
+                    </a>
+                </li>
+            	<li>
+                	<a rel="nofollow" href="javascript:void(0)">
+                    	<i class="iconfont"></i>520余家售后网点
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="footer-links clearfix">
+            {include file='library/help.lbi'}
+            <div class="col-contact">
+                <p class="phone">{$service_phone}</p>
+                <p>周一至周日 8:00-18:00<br>（仅收市话费）</p>
+     <!-- QQ 号码 {foreach from=$qq item=im} -->
+      <!-- {if $im} -->
+      
+                <a rel="nofollow" class="btn btn-line-primary btn-small"  href="http://wpa.qq.com/msgrd?V=1&amp;uin={$im}&amp;Site={$shop_name}&amp;Menu=yes" target="_blank">
+                    <i class="iconfont"></i> 24小时在线客服
+                </a>
+                <!-- {else} -->
+                 <a rel="nofollow" class="btn btn-line-primary btn-small"  href="http://wpa.qq.com/msgrd?V=1&uin=1152875929" target="_blank">
+                    <i class="iconfont"></i> 24小时在线客服
+                </a>
+                
+                <!-- {/if} -->
+      <!-- {/foreach} 结束QQ号码 -->
+            </div>
+        </div>
+    </div>
+</div>
+<div class="site-info">
+	<div class="container">
+    	<div class="logo ir">{$shop_name}</div>
+        <div class="info-text">
+        	<p class="sites">
+            	<!--开始文字类型的友情链接{foreach from=$txt_links item=link name=link}-->
+                <a href="{$link.url}" target="_blank" title="{$link.name}">{$link.name}</a>
+                <!-- {if !$smarty.foreach.link.last} -->
+                <span class="sep">|</span>
+                 <!-- {/if} -->
+                <!--结束文字类型的友情链接{/foreach}-->
+            </p>
+            <p>
+            	{$icp_number}    
+            </p>
+        </div>
+        <div class="info-links">
+        	<a href="#"><img src="http://s1.mi.com/zt/12052601/cnnicVerifyseal.png" alt="可信网站"></a>
+        	<a href="#"><img src="http://s1.mi.com/zt/12052601/szfwVerifyseal.gif" alt="诚信网站"></a>
+        	<a href="#"><img src="http://s1.mi.com/zt/12052601/save.jpg" alt="网上交易保障中心"></a>
+        </div>
+    </div>
+</div>
+<!-- #EndLibraryItem --></body>
+</html>

@@ -1,0 +1,985 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Keywords" content="{$keywords}" />
+<meta name="Description" content="{$description}" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<!-- TemplateBeginEditable name="doctitle" -->
+<title>{$page_title}</title>
+<!-- TemplateEndEditable -->
+<!-- TemplateBeginEditable name="head" -->
+<!-- TemplateEndEditable -->
+<link rel="shortcut icon" href="favicon.ico" />
+<link href="{$ecs_css_path}" rel="stylesheet" type="text/css" />
+<link href="index.css" rel="stylesheet" type="text/css" />
+<link rel="alternate" type="application/rss+xml" title="RSS|{$page_title}" href="{$feed_url}" />
+{* 包含脚本文件 *}
+{insert_scripts files='common.js,index.js'}
+</head>
+<body><!-- #BeginLibraryItem "/library/page_header.lbi" -->
+{insert_scripts files='jquery-1.9.1.min.js,jquery.json.js'}
+{insert_scripts files='transport_jquery.js,utils.js,jquery.SuperSlide.js,xiaomi_common.js'}
+<script type="text/javascript">
+    {literal}
+    <!--
+    function checkSearchForm()
+    {
+        if(document.getElementById('keyword').value)
+        {
+            return true;
+        }
+        else
+        {
+            alert("{$lang.no_keywords}");
+            return false;
+        }
+    }
+    -->
+    {/literal}
+    </script>
+<div class="site-topbar">
+	<div class="container">
+    	<!--{if $navigator_list.top}-->
+    	<div class="topbar-nav">
+        	<!-- {foreach name=nav_top_list from=$navigator_list.top item=nav} -->
+            <a href="{$nav.url}" <!-- {if $nav.opennew eq 1} --> target="_blank" <!-- {/if} --> class="snc-link snc-order">{$nav.name}</a>
+            <!-- {if !$smarty.foreach.nav_top_list.last} --><span class="sep">|</span><!-- {/if} -->
+            <!-- {/foreach} -->
+        </div>
+        <!-- {/if} -->
+        <div class="topbar-cart" id="ECS_CARTINFO">
+            {insert name='cart_info'}
+        </div>
+        <div class="topbar-info J_userInfo" id="ECS_MEMBERZONE">
+        	{* ECSHOP 提醒您：根据用户id来调用member_info.lbi显示不同的界面  *}{insert name='member_info'}
+        </div>
+    </div>
+</div>
+<div class="site-header" style="clear:both;">
+	<div class="container">
+    	<div class="header-logo">
+        	<a href="library/index.php" title="{$shop_name}"><img src="images/logo.gif" /></a>
+        </div>
+        <div class="header-nav">
+        	<ul class="nav-list">
+            	<li class="nav-category">
+                	<a class="btn-category-list" href="library/catalog.php" {if $script_name eq 'index'}style="display:none;"{/if}>全部商品分类</a>
+                	<div class="site-category {if $script_name neq 'index'}category-hidden{/if}">
+                    	<ul class="site-category-list clearfix" id="site-category-list">
+                            <!--{foreach from=$categories item=cat name=foo}-->
+                        	<li class="category-item">
+                            	<a class="title" href="{$cat.url}">{$cat.name|escape:html}<i class="iconfont"></i></a>
+                                <div class="children clearfix">
+                                	<!--{foreach from=$cat.cat_id item=child name=no1}-->
+                                    <!--{if $smarty.foreach.no1.iteration %6 ==1}-->
+                                	<ul class="children-list">
+                                    <!--{/if}-->
+                                    	<li>
+                                        	<a href="{$child.url}" class="link">
+                                            	<img class="thumb" src="data/catthumb/{$child.thumb}" width="40" height="40">
+                                            	<span>{$child.name|escape:html}</span>
+                                            </a>
+                                        </li>
+                                    <!--{if $smarty.foreach.no1.iteration % 6 == 0 || $smarty.foreach.no1.last}-->
+                                    </ul>
+                                    <!--{/if}-->
+                                    <!--{/foreach}-->
+                                </div>
+                            </li>
+                            <!--{/foreach}-->
+                        </ul>
+                    </div>
+                </li>
+                <!-- {foreach name=nav_middle_list from=$navigator_list.middle item=nav} -->
+            	<li class="nav-item">
+                	<a class="link" href="{$nav.url}" {if $nav.opennew eq 1}target="_blank"{/if} {if $nav.active eq 1} class="current"{/if}><span>{$nav.name}</span></a>
+                    <!-- {if $nav.cat_list}-->
+                    <div class='item-children'>
+                    	<div class="container">
+                        	<ul class="children-list clearfix">
+                            	<!--{foreach from=$nav.goods item=cat name=cat}-->
+                                    <!-- {if $smarty.foreach.cat.iteration<7}-->
+                                    <!--{foreach from=$cat.goods item=good name=good}-->
+                                    <!-- {if $smarty.foreach.good.iteration==1}-->
+                                    <li class="first">
+                                        <div class="figure figure-thumb"><a href="{$good.url}"><img src="{$good.thumb|escape:html}"  alt="{$good.name|escape:html}"></a></div>
+                                        <div class="title"><a href="{$good.url}">{$good.name|escape:html}</a></div>
+                                        <p class="price">{$good.shop_price}元</p>
+                                    </li>
+                                    <!-- {/if} -->
+                                    <!--{/foreach}-->
+                                    <!-- {/if} -->
+                                <!--{/foreach}-->
+                            </ul>
+                    	</div>
+                    </div>
+                    <!-- {/if}-->
+                </li>
+                <!-- {/foreach} -->
+            </ul>
+        </div>
+        <div class="header-search">
+        	<form action="library/search.php" method="get" id="searchForm" name="searchForm" onSubmit="return checkSearchForm()" class="search-form clearfix">
+            	<label class="hide">站内搜索</label>
+        		<input class="search-text" type="text" name="keywords" id="keyword" value="{$search_keywords|escape}" autocomplete="off">
+        		<input type="hidden" value="k1" name="dataBi">
+        		<button type="submit" class="search-btn iconfont"></button>
+                {if $searchkeywords}
+                <div class="hot-words" {if $search_keywords}style="display:none"{/if}>
+                	{foreach from=$searchkeywords item=val} <a href="search.php?keywords={$val|escape:url}" target="_blank">{$val}</a> {/foreach}
+                </div>
+                {/if}
+      		</form>
+        </div>
+    </div>
+	<div id="J_navMenu" class="header-nav-menu" style="display: none;">
+    	<div class="container"></div>
+    </div>
+</div>
+
+<!-- #EndLibraryItem -->{insert_scripts files='xiaomi_index.js'}
+<div class="home-hero-container container">
+	<div class="home-hero">
+    	<div class="home-hero-slider">
+			<!--首页轮播 strat--><!-- #BeginLibraryItem "/library/index_ad.lbi" -->
+<div id="J_homeSlider" class="xm-slider" style="overflow:hidden;">
+	<div class="xm-slider-container">
+    	<div class="xm-slider-control">
+            <!--{foreach from=$index_ad_w item=index_ad}-->
+            <div class="slide xm-slider-slide">
+                <a target="_blank" href="{$index_ad.url}" >
+                    <img src="{$index_ad.src}" />
+                </a>
+            </div>
+            <!--{/foreach}-->
+        </div>
+    </div>
+    <a class="xm-slider-previous xm-slider-navigation icon-slides icon-slides-prev prev" href="#" style="display:none;">上一张</a>
+	<a class="xm-slider-next xm-slider-navigation icon-slides icon-slides-next next" href="#" style="display: none;">下一张</a>
+    <ul class="xm-slider-pagination">
+    	<!--{foreach from=$index_ad_w item=index_ad name=foo}-->
+        <li class="xm-slider-pagination-item">
+            <a href="javascript:;" {if $smarty.foreach.foo.first}class="active"{/if}>{$smarty.foreach.foo.iteration}</a>
+        </li>
+        <!--{/foreach}-->
+    </ul>
+</div>
+<!-- #EndLibraryItem --><!--首页轮播 end-->
+        </div>    
+        <!--首页轮播下广告 strat-->
+        <div class="home-hero-sub row">
+            <div class="span4"><!-- #BeginLibraryItem "/library/channel_list.lbi" -->
+<ul class="home-channel-list clearfix">
+  <li>
+      <a href="library/auction.php">
+          <i class="iconfont"></i>拍卖商品
+      </a>
+  </li>
+  <li>
+      <a href="library/group_buy.php">
+          <i class="iconfont"></i>企业团购
+      </a>
+  </li>
+  <li>
+      <a href="library/exchange.php">
+          <i class="iconfont"></i>积分商城
+      </a>
+  </li>
+  <li>
+      <a href="library/snatch.php">
+          <i class="iconfont"></i>夺宝奇兵
+      </a>
+  </li>
+  <li>
+      <a href="library/brand.php">
+          <i class="iconfont"></i>品牌商品
+      </a>
+  </li>
+  <li>
+      <a href="library/pick_out.php">
+          <i class="iconfont"></i>选购中心
+      </a>
+  </li>
+</ul>
+<!-- #EndLibraryItem --></div>
+            <div class="span16">
+            <!-- TemplateBeginEditable name="首页轮播下广告" -->
+<!-- #BeginLibraryItem "/library/ad_position.lbi" -->
+
+	{insert name='ads' id=$ads_id num=$ads_num}
+ <!-- #EndLibraryItem -->
+<!-- TemplateEndEditable -->
+            </div>
+        </div>
+        <!--首页轮播下广告 end-->
+    </div>
+    <!--小米明星单品（调用精品） start-->
+    <div class="home-star-goods xm-carousel-container">
+    	<!-- TemplateBeginEditable name="小米明星单品（调用精品）" --><!-- #BeginLibraryItem "/library/recommend_best.lbi" -->
+<!-- {if $best_goods} -->
+<!-- {if $script_name eq "index"} -->
+<div class="xm-plain-box J_starGoodsCarousel">
+	<div class="box-hd">
+    	<h2 class="title">
+			小米明星单品
+        </h2>
+        <div class="more">
+        	<div class="xm-controls xm-controls-line-small xm-carousel-controls">
+            	<a class="control control-prev iconfont" href="javascript: void(0);"></a>
+				<a class="control control-next iconfont" href="javascript: void(0);"></a>
+            </div>
+        </div>
+    </div>
+    <div class="box-bd">
+    	<div class="xm-carousel-wrapper J_carouselWrap">
+        	<ul class="xm-carousel-list xm-carousel-col-5-list goods-list rainbow-list clearfix J_carouselList">
+            	<!--{foreach from=$best_goods item=goods name=best_goods}-->
+                	<li class="rainbow-item-{$smarty.foreach.best_goods.iteration}">
+                    	<a class="thumb" href="{$goods.url}" target="_blank">
+                        	<img src="{$goods.thumb}" />
+                        </a>
+                        <h3 class="title">
+                        	<a href="{$goods.url}" target="_blank">{$goods.short_style_name}</a>
+                        </h3>
+                        <p class="desc">{$goods.brief}</p>
+                        <p class="price">
+                        <!-- {if $goods.promote_price neq ""} --> 
+    {$goods.promote_price} <del>{$goods.shop_price}</del> 
+    <!-- {else}--> 
+    {$goods.shop_price} 
+    <!--{/if}--> </p>
+                    </li>
+                <!--{/foreach}-->
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!--{else}-->
+
+
+
+
+	<div class="temai_box">
+  <h2>今日推荐</h2>
+  <div class="temai_main">
+    <ul class="temai_list cle" id="temai_list">
+     <!--{foreach from=$best_goods item=goods}-->
+      <li class="show"> <a href="{$goods.url}" target="_blank">
+        <p class="pic"> <img src="{$goods.thumb}" style="display: inline;"> </p>
+        <h3>{$goods.short_style_name}</h3>
+        <p class="price"> <span class="bd"><strong><!-- {if $goods.promote_price neq ""} -->
+          {$goods.promote_price}
+          <!-- {else}-->
+          {$goods.shop_price}
+          <!--{/if}--></strong> </span> <span class="sale"><b>{$goods.market_price}</b></span> <span class="num">销量：<strong>{$goods.sales_volume}</strong></span> </p>
+        </a> </li>
+        <!--{/foreach}-->
+    </ul>
+  </div>
+</div>
+<!-- {/if} --> 
+<!-- {/if} --> 
+<!-- #EndLibraryItem --><!-- TemplateEndEditable -->
+    </div>
+</div>
+
+<!--页面主体-->
+<div class="page-main home-main">
+	<div class="container">
+	 <!-- TemplateBeginEditable name="分类下商品区域" --><!-- #BeginLibraryItem "/library/cat_goods.lbi" -->
+<div class="home-brick-box home-brick-row-2-box xm-plain-box J_itemBox J_brickBox is-visible loaded">
+	<!--分类商品头部-->
+	<div class="box-hd">
+        <h2 class="title">{$goods_cat.name}</h2>
+        <div class="more J_brickNav">
+            <a class="more-link" href="{$goods_cat.url}" style=" display:inline-block;">
+                查看全部<i class="iconfont"></i>
+            </a>
+            <ul class="tab-list J_brickTabSwitch">
+            	<li class="tab-active">热门</li>
+                <!--{foreach from=$goods_cat.goods_level2  item=goods_level2 name=goods_level2}-->
+                <!-- {if $smarty.foreach.goods_level2.iteration<5}-->
+            	<li>{$goods_level2.name}</li>
+                <!-- {/if} -->
+                <!--{/foreach}-->
+            </ul>
+        </div>
+    </div>
+    <!--分类商品主体-->
+    <div class="box-bd J_brickBd">
+    	<div class="row">
+        	<div class="span4 span-first">
+                <ul class="brick-promo-list clearfix">
+                  <!-- {if $goods_cat.sort_order eq 1}-->
+                    <li class="brick-item brick-item-l">
+                    {insert name='ads_pro' cat_name=$goods_cat.name type='分类下商品左侧广告大'}
+                    </li>
+                  <!--{else}-->
+                    <li class="brick-item brick-item-m">
+                    {insert name='ads_pro' cat_name=$goods_cat.name type='分类下商品左侧广告小1'}
+                    </li>
+                    <li class="brick-item brick-item-m">
+                    {insert name='ads_pro' cat_name=$goods_cat.name type='分类下商品左侧广告小2'}
+                    </li>
+                  <!-- {/if} -->
+                </ul>
+                
+            </div>
+
+            <div class="span16">
+            
+            	<!--热门 start-->
+            	<ul class="brick-list clearfix">
+                  <!--{foreach from=$goods_cat.cat_hot item=goods name=cate}-->
+                  <!-- {if $smarty.foreach.cate.iteration<9}-->
+                  <li class="brick-item brick-item-m">
+                      <div class="figure figure-img">
+                          <a href="{$goods.url}">
+                              <img src="{$goods.thumb}" width="160" height="160" alt="{$goods.name|escape:html}">
+                          </a>
+                      </div>
+                      <h3 class="title">
+                          <a href="{$goods.url}">{$goods.name|escape:html}</a>
+                      </h3>
+                      <p class="desc">{$goods.brief}</p>
+                      <p class="price">
+                          <!-- {if $goods.promote_price neq ""} -->{$goods.promote_price}<!-- {else}-->{$goods.shop_price}<!--{/if}-->
+                      </p>
+                      <p class="rank">{$goods.comments.comment_percent.comment_count|default:0}人评价</p>
+                      <!--{foreach from=$goods.comments.comments item=comments name=comments}-->
+                      <!-- {if $smarty.foreach.comments.iteration==1}-->
+                      <div class="review-wrapper">
+                          <a href="javascript:void(0)">
+                              <span class="review"> {$comments.content|escape:html|truncate:26}</span>
+                              <span class="author"> 来自于 {$comments.username|default:匿名用户} 的评价 </span>
+                          </a>
+                      </div>
+                      <!-- {/if} -->
+                      <!--{/foreach}-->
+                  </li>
+                  <!-- {/if} -->
+                  <!--{/foreach}-->
+                </ul>
+                <!--热门 end-->
+                
+            	<!--{foreach from=$goods_cat.goods_level2  item=goods_level2 name=goods_level2}-->
+                <!-- {if $smarty.foreach.goods_level2.iteration<5}-->
+            	<ul class="brick-list clearfix">
+                  <!--{foreach from=$goods_level2.goods item=goods name=goods}-->
+                  <!-- {if $smarty.foreach.goods.iteration<9}-->
+                  <li class="brick-item brick-item-m">
+                      <div class="figure figure-img">
+                          <a href="{$goods.url}">
+                              <img src="{$goods.goods_thumb}" width="160" height="160" alt="{$goods.name|escape:html}">
+                          </a>
+                      </div>
+                      <h3 class="title">
+                          <a href="{$goods.url}">{$goods.goods_name|escape:html}</a>
+                      </h3>
+                      <p class="desc">{$goods.goods_brief}</p>
+                      <p class="price">
+                          <!-- {if $goods.promote_price neq ""} -->{$goods.promote_price}<!-- {else}-->{$goods.shop_price}<!--{/if}-->
+                      </p>
+                      <p class="rank">{$goods.comments.comment_percent.comment_count|default:0}人评价</p>
+                      <!--{foreach from=$goods.comments.comments item=comments name=comments}-->
+                      <!-- {if $smarty.foreach.comments.iteration==1}-->
+                      <div class="review-wrapper">
+                          <a href="javascript:void(0)">
+                              <span class="review"> {$comments.content|escape:html|truncate:26}</span>
+                              <span class="author"> 来自于 {$comments.username|default:匿名用户} 的评价 </span>
+                          </a>
+                      </div>
+                      <!-- {/if} -->
+                      <!--{/foreach}-->
+                  </li>
+                  <!-- {/if} -->
+                  <!--{/foreach}-->
+                </ul>
+                <!-- {/if} -->
+                <!--{/foreach}-->
+            </div>
+        </div>
+    </div>
+</div><!-- #EndLibraryItem --><!-- #BeginLibraryItem "/library/cat_goods.lbi" -->
+<div class="home-brick-box home-brick-row-2-box xm-plain-box J_itemBox J_brickBox is-visible loaded">
+	<!--分类商品头部-->
+	<div class="box-hd">
+        <h2 class="title">{$goods_cat.name}</h2>
+        <div class="more J_brickNav">
+            <a class="more-link" href="{$goods_cat.url}" style=" display:inline-block;">
+                查看全部<i class="iconfont"></i>
+            </a>
+            <ul class="tab-list J_brickTabSwitch">
+            	<li class="tab-active">热门</li>
+                <!--{foreach from=$goods_cat.goods_level2  item=goods_level2 name=goods_level2}-->
+                <!-- {if $smarty.foreach.goods_level2.iteration<5}-->
+            	<li>{$goods_level2.name}</li>
+                <!-- {/if} -->
+                <!--{/foreach}-->
+            </ul>
+        </div>
+    </div>
+    <!--分类商品主体-->
+    <div class="box-bd J_brickBd">
+    	<div class="row">
+        	<div class="span4 span-first">
+                <ul class="brick-promo-list clearfix">
+                  <!-- {if $goods_cat.sort_order eq 1}-->
+                    <li class="brick-item brick-item-l">
+                    {insert name='ads_pro' cat_name=$goods_cat.name type='分类下商品左侧广告大'}
+                    </li>
+                  <!--{else}-->
+                    <li class="brick-item brick-item-m">
+                    {insert name='ads_pro' cat_name=$goods_cat.name type='分类下商品左侧广告小1'}
+                    </li>
+                    <li class="brick-item brick-item-m">
+                    {insert name='ads_pro' cat_name=$goods_cat.name type='分类下商品左侧广告小2'}
+                    </li>
+                  <!-- {/if} -->
+                </ul>
+                
+            </div>
+
+            <div class="span16">
+            
+            	<!--热门 start-->
+            	<ul class="brick-list clearfix">
+                  <!--{foreach from=$goods_cat.cat_hot item=goods name=cate}-->
+                  <!-- {if $smarty.foreach.cate.iteration<9}-->
+                  <li class="brick-item brick-item-m">
+                      <div class="figure figure-img">
+                          <a href="{$goods.url}">
+                              <img src="{$goods.thumb}" width="160" height="160" alt="{$goods.name|escape:html}">
+                          </a>
+                      </div>
+                      <h3 class="title">
+                          <a href="{$goods.url}">{$goods.name|escape:html}</a>
+                      </h3>
+                      <p class="desc">{$goods.brief}</p>
+                      <p class="price">
+                          <!-- {if $goods.promote_price neq ""} -->{$goods.promote_price}<!-- {else}-->{$goods.shop_price}<!--{/if}-->
+                      </p>
+                      <p class="rank">{$goods.comments.comment_percent.comment_count|default:0}人评价</p>
+                      <!--{foreach from=$goods.comments.comments item=comments name=comments}-->
+                      <!-- {if $smarty.foreach.comments.iteration==1}-->
+                      <div class="review-wrapper">
+                          <a href="javascript:void(0)">
+                              <span class="review"> {$comments.content|escape:html|truncate:26}</span>
+                              <span class="author"> 来自于 {$comments.username|default:匿名用户} 的评价 </span>
+                          </a>
+                      </div>
+                      <!-- {/if} -->
+                      <!--{/foreach}-->
+                  </li>
+                  <!-- {/if} -->
+                  <!--{/foreach}-->
+                </ul>
+                <!--热门 end-->
+                
+            	<!--{foreach from=$goods_cat.goods_level2  item=goods_level2 name=goods_level2}-->
+                <!-- {if $smarty.foreach.goods_level2.iteration<5}-->
+            	<ul class="brick-list clearfix">
+                  <!--{foreach from=$goods_level2.goods item=goods name=goods}-->
+                  <!-- {if $smarty.foreach.goods.iteration<9}-->
+                  <li class="brick-item brick-item-m">
+                      <div class="figure figure-img">
+                          <a href="{$goods.url}">
+                              <img src="{$goods.goods_thumb}" width="160" height="160" alt="{$goods.name|escape:html}">
+                          </a>
+                      </div>
+                      <h3 class="title">
+                          <a href="{$goods.url}">{$goods.goods_name|escape:html}</a>
+                      </h3>
+                      <p class="desc">{$goods.goods_brief}</p>
+                      <p class="price">
+                          <!-- {if $goods.promote_price neq ""} -->{$goods.promote_price}<!-- {else}-->{$goods.shop_price}<!--{/if}-->
+                      </p>
+                      <p class="rank">{$goods.comments.comment_percent.comment_count|default:0}人评价</p>
+                      <!--{foreach from=$goods.comments.comments item=comments name=comments}-->
+                      <!-- {if $smarty.foreach.comments.iteration==1}-->
+                      <div class="review-wrapper">
+                          <a href="javascript:void(0)">
+                              <span class="review"> {$comments.content|escape:html|truncate:26}</span>
+                              <span class="author"> 来自于 {$comments.username|default:匿名用户} 的评价 </span>
+                          </a>
+                      </div>
+                      <!-- {/if} -->
+                      <!--{/foreach}-->
+                  </li>
+                  <!-- {/if} -->
+                  <!--{/foreach}-->
+                </ul>
+                <!-- {/if} -->
+                <!--{/foreach}-->
+            </div>
+        </div>
+    </div>
+</div><!-- #EndLibraryItem --><!-- #BeginLibraryItem "/library/cat_goods.lbi" -->
+<div class="home-brick-box home-brick-row-2-box xm-plain-box J_itemBox J_brickBox is-visible loaded">
+	<!--分类商品头部-->
+	<div class="box-hd">
+        <h2 class="title">{$goods_cat.name}</h2>
+        <div class="more J_brickNav">
+            <a class="more-link" href="{$goods_cat.url}" style=" display:inline-block;">
+                查看全部<i class="iconfont"></i>
+            </a>
+            <ul class="tab-list J_brickTabSwitch">
+            	<li class="tab-active">热门</li>
+                <!--{foreach from=$goods_cat.goods_level2  item=goods_level2 name=goods_level2}-->
+                <!-- {if $smarty.foreach.goods_level2.iteration<5}-->
+            	<li>{$goods_level2.name}</li>
+                <!-- {/if} -->
+                <!--{/foreach}-->
+            </ul>
+        </div>
+    </div>
+    <!--分类商品主体-->
+    <div class="box-bd J_brickBd">
+    	<div class="row">
+        	<div class="span4 span-first">
+                <ul class="brick-promo-list clearfix">
+                  <!-- {if $goods_cat.sort_order eq 1}-->
+                    <li class="brick-item brick-item-l">
+                    {insert name='ads_pro' cat_name=$goods_cat.name type='分类下商品左侧广告大'}
+                    </li>
+                  <!--{else}-->
+                    <li class="brick-item brick-item-m">
+                    {insert name='ads_pro' cat_name=$goods_cat.name type='分类下商品左侧广告小1'}
+                    </li>
+                    <li class="brick-item brick-item-m">
+                    {insert name='ads_pro' cat_name=$goods_cat.name type='分类下商品左侧广告小2'}
+                    </li>
+                  <!-- {/if} -->
+                </ul>
+                
+            </div>
+
+            <div class="span16">
+            
+            	<!--热门 start-->
+            	<ul class="brick-list clearfix">
+                  <!--{foreach from=$goods_cat.cat_hot item=goods name=cate}-->
+                  <!-- {if $smarty.foreach.cate.iteration<9}-->
+                  <li class="brick-item brick-item-m">
+                      <div class="figure figure-img">
+                          <a href="{$goods.url}">
+                              <img src="{$goods.thumb}" width="160" height="160" alt="{$goods.name|escape:html}">
+                          </a>
+                      </div>
+                      <h3 class="title">
+                          <a href="{$goods.url}">{$goods.name|escape:html}</a>
+                      </h3>
+                      <p class="desc">{$goods.brief}</p>
+                      <p class="price">
+                          <!-- {if $goods.promote_price neq ""} -->{$goods.promote_price}<!-- {else}-->{$goods.shop_price}<!--{/if}-->
+                      </p>
+                      <p class="rank">{$goods.comments.comment_percent.comment_count|default:0}人评价</p>
+                      <!--{foreach from=$goods.comments.comments item=comments name=comments}-->
+                      <!-- {if $smarty.foreach.comments.iteration==1}-->
+                      <div class="review-wrapper">
+                          <a href="javascript:void(0)">
+                              <span class="review"> {$comments.content|escape:html|truncate:26}</span>
+                              <span class="author"> 来自于 {$comments.username|default:匿名用户} 的评价 </span>
+                          </a>
+                      </div>
+                      <!-- {/if} -->
+                      <!--{/foreach}-->
+                  </li>
+                  <!-- {/if} -->
+                  <!--{/foreach}-->
+                </ul>
+                <!--热门 end-->
+                
+            	<!--{foreach from=$goods_cat.goods_level2  item=goods_level2 name=goods_level2}-->
+                <!-- {if $smarty.foreach.goods_level2.iteration<5}-->
+            	<ul class="brick-list clearfix">
+                  <!--{foreach from=$goods_level2.goods item=goods name=goods}-->
+                  <!-- {if $smarty.foreach.goods.iteration<9}-->
+                  <li class="brick-item brick-item-m">
+                      <div class="figure figure-img">
+                          <a href="{$goods.url}">
+                              <img src="{$goods.goods_thumb}" width="160" height="160" alt="{$goods.name|escape:html}">
+                          </a>
+                      </div>
+                      <h3 class="title">
+                          <a href="{$goods.url}">{$goods.goods_name|escape:html}</a>
+                      </h3>
+                      <p class="desc">{$goods.goods_brief}</p>
+                      <p class="price">
+                          <!-- {if $goods.promote_price neq ""} -->{$goods.promote_price}<!-- {else}-->{$goods.shop_price}<!--{/if}-->
+                      </p>
+                      <p class="rank">{$goods.comments.comment_percent.comment_count|default:0}人评价</p>
+                      <!--{foreach from=$goods.comments.comments item=comments name=comments}-->
+                      <!-- {if $smarty.foreach.comments.iteration==1}-->
+                      <div class="review-wrapper">
+                          <a href="javascript:void(0)">
+                              <span class="review"> {$comments.content|escape:html|truncate:26}</span>
+                              <span class="author"> 来自于 {$comments.username|default:匿名用户} 的评价 </span>
+                          </a>
+                      </div>
+                      <!-- {/if} -->
+                      <!--{/foreach}-->
+                  </li>
+                  <!-- {/if} -->
+                  <!--{/foreach}-->
+                </ul>
+                <!-- {/if} -->
+                <!--{/foreach}-->
+            </div>
+        </div>
+    </div>
+</div><!-- #EndLibraryItem --><!-- #BeginLibraryItem "/library/cat_goods.lbi" -->
+<div class="home-brick-box home-brick-row-2-box xm-plain-box J_itemBox J_brickBox is-visible loaded">
+	<!--分类商品头部-->
+	<div class="box-hd">
+        <h2 class="title">{$goods_cat.name}</h2>
+        <div class="more J_brickNav">
+            <a class="more-link" href="{$goods_cat.url}" style=" display:inline-block;">
+                查看全部<i class="iconfont"></i>
+            </a>
+            <ul class="tab-list J_brickTabSwitch">
+            	<li class="tab-active">热门</li>
+                <!--{foreach from=$goods_cat.goods_level2  item=goods_level2 name=goods_level2}-->
+                <!-- {if $smarty.foreach.goods_level2.iteration<5}-->
+            	<li>{$goods_level2.name}</li>
+                <!-- {/if} -->
+                <!--{/foreach}-->
+            </ul>
+        </div>
+    </div>
+    <!--分类商品主体-->
+    <div class="box-bd J_brickBd">
+    	<div class="row">
+        	<div class="span4 span-first">
+                <ul class="brick-promo-list clearfix">
+                  <!-- {if $goods_cat.sort_order eq 1}-->
+                    <li class="brick-item brick-item-l">
+                    {insert name='ads_pro' cat_name=$goods_cat.name type='分类下商品左侧广告大'}
+                    </li>
+                  <!--{else}-->
+                    <li class="brick-item brick-item-m">
+                    {insert name='ads_pro' cat_name=$goods_cat.name type='分类下商品左侧广告小1'}
+                    </li>
+                    <li class="brick-item brick-item-m">
+                    {insert name='ads_pro' cat_name=$goods_cat.name type='分类下商品左侧广告小2'}
+                    </li>
+                  <!-- {/if} -->
+                </ul>
+                
+            </div>
+
+            <div class="span16">
+            
+            	<!--热门 start-->
+            	<ul class="brick-list clearfix">
+                  <!--{foreach from=$goods_cat.cat_hot item=goods name=cate}-->
+                  <!-- {if $smarty.foreach.cate.iteration<9}-->
+                  <li class="brick-item brick-item-m">
+                      <div class="figure figure-img">
+                          <a href="{$goods.url}">
+                              <img src="{$goods.thumb}" width="160" height="160" alt="{$goods.name|escape:html}">
+                          </a>
+                      </div>
+                      <h3 class="title">
+                          <a href="{$goods.url}">{$goods.name|escape:html}</a>
+                      </h3>
+                      <p class="desc">{$goods.brief}</p>
+                      <p class="price">
+                          <!-- {if $goods.promote_price neq ""} -->{$goods.promote_price}<!-- {else}-->{$goods.shop_price}<!--{/if}-->
+                      </p>
+                      <p class="rank">{$goods.comments.comment_percent.comment_count|default:0}人评价</p>
+                      <!--{foreach from=$goods.comments.comments item=comments name=comments}-->
+                      <!-- {if $smarty.foreach.comments.iteration==1}-->
+                      <div class="review-wrapper">
+                          <a href="javascript:void(0)">
+                              <span class="review"> {$comments.content|escape:html|truncate:26}</span>
+                              <span class="author"> 来自于 {$comments.username|default:匿名用户} 的评价 </span>
+                          </a>
+                      </div>
+                      <!-- {/if} -->
+                      <!--{/foreach}-->
+                  </li>
+                  <!-- {/if} -->
+                  <!--{/foreach}-->
+                </ul>
+                <!--热门 end-->
+                
+            	<!--{foreach from=$goods_cat.goods_level2  item=goods_level2 name=goods_level2}-->
+                <!-- {if $smarty.foreach.goods_level2.iteration<5}-->
+            	<ul class="brick-list clearfix">
+                  <!--{foreach from=$goods_level2.goods item=goods name=goods}-->
+                  <!-- {if $smarty.foreach.goods.iteration<9}-->
+                  <li class="brick-item brick-item-m">
+                      <div class="figure figure-img">
+                          <a href="{$goods.url}">
+                              <img src="{$goods.goods_thumb}" width="160" height="160" alt="{$goods.name|escape:html}">
+                          </a>
+                      </div>
+                      <h3 class="title">
+                          <a href="{$goods.url}">{$goods.goods_name|escape:html}</a>
+                      </h3>
+                      <p class="desc">{$goods.goods_brief}</p>
+                      <p class="price">
+                          <!-- {if $goods.promote_price neq ""} -->{$goods.promote_price}<!-- {else}-->{$goods.shop_price}<!--{/if}-->
+                      </p>
+                      <p class="rank">{$goods.comments.comment_percent.comment_count|default:0}人评价</p>
+                      <!--{foreach from=$goods.comments.comments item=comments name=comments}-->
+                      <!-- {if $smarty.foreach.comments.iteration==1}-->
+                      <div class="review-wrapper">
+                          <a href="javascript:void(0)">
+                              <span class="review"> {$comments.content|escape:html|truncate:26}</span>
+                              <span class="author"> 来自于 {$comments.username|default:匿名用户} 的评价 </span>
+                          </a>
+                      </div>
+                      <!-- {/if} -->
+                      <!--{/foreach}-->
+                  </li>
+                  <!-- {/if} -->
+                  <!--{/foreach}-->
+                </ul>
+                <!-- {/if} -->
+                <!--{/foreach}-->
+            </div>
+        </div>
+    </div>
+</div><!-- #EndLibraryItem --><!-- TemplateEndEditable -->
+
+      <div class="home-star-goods recommend-for-you">
+      <!-- TemplateBeginEditable name="为您推荐（调用热卖）" -->
+<!-- #BeginLibraryItem "/library/recommend_hot.lbi" -->
+
+<!-- {if $hot_goods} -->
+<!--{if $script_name eq 'index'}-->
+<div class="xm-plain-box">
+	<div class="box-hd">
+    	<h2 class="title">
+			为你推荐
+        </h2>
+        <div class="more">
+        	<div class="xm-controls xm-controls-line-small xm-carousel-controls">
+            	<a class="control control-prev iconfont" href="javascript: void(0);"></a>
+				<a class="control control-next iconfont" href="javascript: void(0);"></a>
+            </div>
+        </div>
+    </div>
+    <div class="box-bd">
+    	<div class="xm-carousel-wrapper J_carouselWrap">
+        	<ul class="xm-carousel-list xm-carousel-col-5-list goods-list rainbow-list clearfix J_carouselList">
+            	<!--{foreach from=$hot_goods item=goods name=hot_goods}-->
+                	<li>
+                    	<a class="thumb" href="{$goods.url}" target="_blank">
+                        	<img src="{$goods.thumb}" />
+                        </a>
+                        <h3 class="title">
+                        	<a href="{$goods.url}" target="_blank">{$goods.short_style_name}</a>
+                        </h3>
+                        <p class="price"><!-- {if $goods.promote_price neq ""} -->{$goods.promote_price}<!-- {else}-->{$goods.shop_price}<!--{/if}--></p>
+                    </li>
+                <!--{/foreach}-->
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!--{else}-->
+
+    <div id="J_renovateWrap" class="xm-recommend-container container xm-carousel-container">
+        <h2 class="xm-recommend-title"><span>为你推荐</span></h2>
+        <div class="xm-recommend">
+            <div class="xm-carousel-wrapper">
+                <ul class="xm-carousel-col-5-list xm-carousel-list clearfix">
+                	<!--{foreach from=$hot_goods item=goods name=hot_goods}-->
+                    <li class="J_xm-recommend-list">
+                        <dl>
+                            <dt><a href="{$goods.url}" target="_blank"><img src="{$goods.thumb}" /></a></dt>
+                            <dd class="xm-recommend-name"><a href="{$goods.url}" target="_blank" title="{$goods.short_style_name}">{$goods.short_style_name}</a></dd>
+                            <dd class="xm-recommend-price"><!-- {if $goods.promote_price neq ""} -->{$goods.promote_price}<!-- {else}-->{$goods.shop_price}<!--{/if}--></dd>
+                            <dd class="xm-recommend-tips"> </dd>
+                        </dl>
+                    </li>
+                    
+                    <!--{/foreach}-->
+                </ul>
+            </div>
+            <div class="xm-pagers-wrapper">
+                <ul class="xm-pagers">
+                	<!--{foreach from=$hot_goods item=goods name=hot_goods}-->
+                    <!--{if $smarty.foreach.hot_goods.index mod 5 eq 0}-->
+                	<li class="pager"><span class="dot">{ $smarty.foreach.hot_goods.iteration}</span></li>
+                    <!-- {/if} --> 
+                    <!--{/foreach}-->
+                </ul>
+            </div>
+        </div>
+    </div>
+<!-- {/if} --> 
+<!-- {/if} --> 
+
+ <!-- #EndLibraryItem -->
+<!-- TemplateEndEditable -->
+      </div>
+      
+      <div id="hot-comment" class="home-review-box xm-plain-box J_itemBox J_reviewBox is-visible"><!-- #BeginLibraryItem "/library/recommend_hot_comment.lbi" -->
+<div class="box-hd">
+	<h2 class="title">热评产品</h2>
+</div>
+<div class="box-bd J_brickBd">
+	<ul class="review-list clearfix">
+    	<!--{foreach from=$index_comments item=comments name=no}-->
+        <!--{if $smarty.foreach.no.iteration < 5}-->
+    	<li class="review-item{if $smarty.foreach.no.first} review-item-first{/if}">
+        	<div class="figure figure-img"><a href="{$comments.url}"><img src="{$comments.goods_thumb}" width="296" height="220" alt="{$comments.goods_name}"></a></div>
+            <p class="review"><a href="{$comments.url}">{$comments.content|truncate:30}</a></p>
+            <p class="author">来自于 {$comments.user_name|default:匿名用户} 的评价</p>
+            <div class="info">
+            	<h3 class="title"><a href="{$comments.url}">{$comments.goods_name}</a></h3>
+                <span class="sep">|</span>
+                <p class="price"><!--{if $comments.promote_price neq 0}-->{$comments.promote_price}<!--{else}-->{$comments.shop_price}<!--{/if}--></p>
+            </div>
+        </li>
+        <!-- {/if} -->
+        <!-- {/foreach} -->
+    </ul>
+</div>
+<!-- #EndLibraryItem --></div>
+      
+      <div id="video" class="home-video-box xm-plain-box J_itemBox J_videoBox is-visible"><!-- #BeginLibraryItem "/library/recommend_video.lbi" -->
+<div class="box-hd"><h2 class="title">视频</h2></div>
+<div class="box-bd J_brickBd">
+	<ul class="video-list clearfix">
+    	<!--视频一-->
+    	<li class="video-item video-item-first">
+        	<div class="figure figure-img">
+            	<a href="javascript:void(0)" data-video="http://player.youku.com/embed/XODcyMjA1MTQw">
+                	<img src="library/images/v-face1.jpg" width="296" height="180"><span class="play"><i class="iconfont"></i></span>
+                </a>
+            </div>
+            <h3 class="title"><a href="javascript:void(0)">小米空气净化器空气实验室</a></h3>
+            <p class="desc">空气净化器有用吗？看了就知道！</p>
+        </li>
+        <!--视频二-->
+    	<li class="video-item">
+        	<div class="figure figure-img">
+            	<a href="javascript:void(0)" data-video="http://player.youku.com/embed/XMTMwODUxNzAwMA==">
+                	<img src="library/images/v-face2.jpg" width="296" height="180"><span class="play"><i class="iconfont"></i></span>
+                </a>
+            </div>
+            <h3 class="title"><a href="javascript:void(0)">60秒看懂小米Note有多酷</a></h3>
+            <p class="desc">美女超模出演小米Note旗舰新品超炫广告</p>
+        </li>
+        <!--视频三-->
+    	<li class="video-item">
+        	<div class="figure figure-img">
+            	<a href="javascript:void(0)" data-video="http://player.youku.com/embed/XMTI1NTI5NzM4MA">
+                	<img src="library/images/v-face3.jpg" width="296" height="180"><span class="play"><i class="iconfont"></i></span>
+                </a>
+            </div>
+            <h3 class="title"><a href="javascript:void(0)">安卓机皇 小米Note顶配版</a></h3>
+            <p class="desc">顶级工艺，性能王者，艺术与科技的高度融合</p>
+        </li>
+        <!--视频四-->
+    	<li class="video-item">
+        	<div class="figure figure-img">
+            	<a href="javascript:void(0)" data-video="http://player.youku.com/embed/XMTMxMTY2MDY2NA==">
+                	<img src="library/images/v-face4.jpg" width="296" height="180"><span class="play"><i class="iconfont"></i></span>
+                </a>
+            </div>
+            <h3 class="title"><a href="javascript:void(0)">小米Note发布会全程视频</a></h3>
+            <p class="desc">一起见证安卓机皇的诞生</p>
+        </li>
+    </ul>
+</div>
+<!-- #EndLibraryItem --></div>
+      
+    </div>
+</div>
+
+<div id="J_modalVideo" class="modal modal-video fade modal-hide">
+	<div class="modal-hd">
+    	<h3 class="title"></h3>
+        <a class="close"><i class="iconfont"></i></a>
+    </div>
+    <div class="modal-bd">
+    	<iframe width="880" height="536" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
+</div><!-- #BeginLibraryItem "/library/page_footer.lbi" -->
+<div class="site-footer">
+	<div class="container">
+    	<div class="footer-service">
+        	<ul class="list-service clearfix">
+            	<li>
+                	<a rel="nofollow" href="javascript:void(0)">
+                    	<i class="iconfont"></i>1小时快修服务
+                    </a>
+                </li>
+            	<li>
+                	<a rel="nofollow" href="javascript:void(0)">
+                    	<i class="iconfont"></i>7天无理由退货
+                    </a>
+                </li>
+            	<li>
+                	<a rel="nofollow" href="javascript:void(0)">
+                    	<i class="iconfont"></i>15天免费换货
+                    </a>
+                </li>
+            	<li>
+                	<a rel="nofollow" href="javascript:void(0)">
+                    	<i class="iconfont"></i>满150元包邮
+                    </a>
+                </li>
+            	<li>
+                	<a rel="nofollow" href="javascript:void(0)">
+                    	<i class="iconfont"></i>520余家售后网点
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="footer-links clearfix">
+            {include file='library/help.lbi'}
+            <div class="col-contact">
+                <p class="phone">{$service_phone}</p>
+                <p>周一至周日 8:00-18:00<br>（仅收市话费）</p>
+     <!-- QQ 号码 {foreach from=$qq item=im} -->
+      <!-- {if $im} -->
+      
+                <a rel="nofollow" class="btn btn-line-primary btn-small"  href="http://wpa.qq.com/msgrd?V=1&amp;uin={$im}&amp;Site={$shop_name}&amp;Menu=yes" target="_blank">
+                    <i class="iconfont"></i> 24小时在线客服
+                </a>
+                <!-- {else} -->
+                 <a rel="nofollow" class="btn btn-line-primary btn-small"  href="http://wpa.qq.com/msgrd?V=1&uin=1152875929" target="_blank">
+                    <i class="iconfont"></i> 24小时在线客服
+                </a>
+                
+                <!-- {/if} -->
+      <!-- {/foreach} 结束QQ号码 -->
+            </div>
+        </div>
+    </div>
+</div>
+<div class="site-info">
+	<div class="container">
+    	<div class="logo ir">{$shop_name}</div>
+        <div class="info-text">
+        	<p class="sites">
+            	<!--开始文字类型的友情链接{foreach from=$txt_links item=link name=link}-->
+                <a href="{$link.url}" target="_blank" title="{$link.name}">{$link.name}</a>
+                <!-- {if !$smarty.foreach.link.last} -->
+                <span class="sep">|</span>
+                 <!-- {/if} -->
+                <!--结束文字类型的友情链接{/foreach}-->
+            </p>
+            <p>
+            	{$icp_number}    
+            </p>
+        </div>
+        <div class="info-links">
+        	<a href="#"><img src="http://s1.mi.com/zt/12052601/cnnicVerifyseal.png" alt="可信网站"></a>
+        	<a href="#"><img src="http://s1.mi.com/zt/12052601/szfwVerifyseal.gif" alt="诚信网站"></a>
+        	<a href="#"><img src="http://s1.mi.com/zt/12052601/save.jpg" alt="网上交易保障中心"></a>
+        </div>
+    </div>
+</div>
+<!-- #EndLibraryItem --></body>
+</html>

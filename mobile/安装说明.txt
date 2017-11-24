@@ -1,0 +1,20 @@
+程序要求
+
+1、Windows 平台：IIS/Apache/Nginx + PHP5.3 + MySQL5.0
+
+2、Linux/Unix/Mac OS X 平台：Apache/Nginx + PHP5.3 + MySQL5.0 (PHP必须在非安全模式下运行)
+
+建议使用平台：CentOS + Nginx1.6 + PHP5.3 + MySQL5.0
+
+PHP必须环境或启用的系统函数： 
+Zend Guard Loader、curl、allow_url_fopen、gettext本地化扩展、GD扩展库、MySQL扩展库、系统函数phpinfo、dir等。
+
+强烈推荐使用云虚拟主机：http://idc.yuehi.net，完美运营，不限带宽。
+
+程序使用说明：https://www.ectouch.cn/docs/v2/
+
+安装步骤
+
+1、运行您的域名/install根据提示进行安装即可
+
+2、如需要使用繁体字的地址，请删除数据库中的ecs_region数据表，然后将根目录下的ecs_region.sql导入即可，如不需要繁体的，可以忽略此步骤。

@@ -1,0 +1,8 @@
+<FilesMatch "\.(bak|inc|lib|sh|tpl|lbi|dwt)$">
+    order deny,allow
+    deny from all
+</FilesMatch>
+<ifModule mod_rewrite.c>
+RewriteEngine On
+#RewriteBase /
+

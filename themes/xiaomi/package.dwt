@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="Keywords" content="{$keywords}" />
+<meta name="Description" content="{$description}" />
+<!-- TemplateBeginEditable name="doctitle" -->
+<title>{$page_title}</title>
+<!-- TemplateEndEditable --><!-- TemplateBeginEditable name="head" --><!-- TemplateEndEditable -->
+<link rel="shortcut icon" href="favicon.ico" />
+<link rel="icon" href="animated_favicon.gif" type="image/gif" />
+<link href="{$ecs_css_path}" rel="stylesheet" type="text/css" />
+<link href="common.css" rel="stylesheet" type="text/css" />
+{* 包含脚本文件 *}
+{insert_scripts files='common.js'}
+</head>
+<body><!-- #BeginLibraryItem "/library/page_header.lbi" -->
+{insert_scripts files='jquery-1.9.1.min.js,jquery.json.js'}
+{insert_scripts files='transport_jquery.js,utils.js,jquery.SuperSlide.js,xiaomi_common.js'}
+<script type="text/javascript">
+    {literal}
+    <!--
+    function checkSearchForm()
+    {
+        if(document.getElementById('keyword').value)
+        {
+            return true;
+        }
+        else
+        {
+            alert("{$lang.no_keywords}");
+            return false;
+        }
+    }
+    -->
+    {/literal}
+    </script>
+<div class="site-topbar">
+	<div class="container">
+    	<!--{if $navigator_list.top}-->
+    	<div class="topbar-nav">
+        	<!-- {foreach name=nav_top_list from=$navigator_list.top item=nav} -->
+            <a href="{$nav.url}" <!-- {if $nav.opennew eq 1} --> target="_blank" <!-- {/if} --> class="snc-link snc-order">{$nav.name}</a>
+            <!-- {if !$smarty.foreach.nav_top_list.last} --><span class="sep">|</span><!-- {/if} -->
+            <!-- {/foreach} -->
+        </div>
+        <!-- {/if} -->
+        <div class="topbar-cart" id="ECS_CARTINFO">
+            {insert name='cart_info'}
+        </div>
+        <div class="topbar-info J_userInfo" id="ECS_MEMBERZONE">
+        	{* ECSHOP 提醒您：根据用户id来调用member_info.lbi显示不同的界面  *}{insert name='member_info'}
+        </div>
+    </div>
+</div>
+<div class="site-header" style="clear:both;">
+	<div class="container">
+    	<div class="header-logo">
+        	<a href="library/index.php" title="{$shop_name}"><img src="images/logo.gif" /></a>
+        </div>
+        <div class="header-nav">
+        	<ul class="nav-list">
+            	<li class="nav-category">
+                	<a class="btn-category-list" href="library/catalog.php" {if $script_name eq 'index'}style="display:none;"{/if}>全部商品分类</a>
+                	<div class="site-category {if $script_name neq 'index'}category-hidden{/if}">
+                    	<ul class="site-category-list clearfix" id="site-category-list">
+                            <!--{foreach from=$categories item=cat name=foo}-->
+                        	<li class="category-item">
+                            	<a class="title" href="{$cat.url}">{$cat.name|escape:html}<i class="iconfont"></i></a>
+                                <div class="children clearfix">
+                                	<!--{foreach from=$cat.cat_id item=child name=no1}-->
+                                    <!--{if $smarty.foreach.no1.iteration %6 ==1}-->
+                                	<ul class="children-list">
+                                    <!--{/if}-->
+                                    	<li>
+                                        	<a href="{$child.url}" class="link">
+                                            	<img class="thumb" src="data/catthumb/{$child.thumb}" width="40" height="40">
+                                            	<span>{$child.name|escape:html}</span>
+                                            </a>
+                                        </li>
+                                    <!--{if $smarty.foreach.no1.iteration % 6 == 0 || $smarty.foreach.no1.last}-->
+                                    </ul>
+                                    <!--{/if}-->
+                                    <!--{/foreach}-->
+                                </div>
+                            </li>
+                            <!--{/foreach}-->
+                        </ul>
+                    </div>
+                </li>
+                <!-- {foreach name=nav_middle_list from=$navigator_list.middle item=nav} -->
+            	<li class="nav-item">
+                	<a class="link" href="{$nav.url}" {if $nav.opennew eq 1}target="_blank"{/if} {if $nav.active eq 1} class="current"{/if}><span>{$nav.name}</span></a>
+                    <!-- {if $nav.cat_list}-->
+                    <div class='item-children'>
+                    	<div class="container">
+                        	<ul class="children-list clearfix">
+                            	<!--{foreach from=$nav.goods item=cat name=cat}-->
+                                    <!-- {if $smarty.foreach.cat.iteration<7}-->
+                                    <!--{foreach from=$cat.goods item=good name=good}-->
+                                    <!-- {if $smarty.foreach.good.iteration==1}-->
+                                    <li class="first">
+                                        <div class="figure figure-thumb"><a href="{$good.url}"><img src="{$good.thumb|escape:html}"  alt="{$good.name|escape:html}"></a></div>
+                                        <div class="title"><a href="{$good.url}">{$good.name|escape:html}</a></div>
+                                        <p class="price">{$good.shop_price}元</p>
+                                    </li>
+                                    <!-- {/if} -->
+                                    <!--{/foreach}-->
+                                    <!-- {/if} -->
+                                <!--{/foreach}-->
+                            </ul>
+                    	</div>
+                    </div>
+                    <!-- {/if}-->
+                </li>
+                <!-- {/foreach} -->
+            </ul>
+        </div>
+        <div class="header-search">
+        	<form action="library/search.php" method="get" id="searchForm" name="searchForm" onSubmit="return checkSearchForm()" class="search-form clearfix">
+            	<label class="hide">站内搜索</label>
+        		<input class="search-text" type="text" name="keywords" id="keyword" value="{$search_keywords|escape}" autocomplete="off">
+        		<input type="hidden" value="k1" name="dataBi">
+        		<button type="submit" class="search-btn iconfont"></button>
+                {if $searchkeywords}
+                <div class="hot-words" {if $search_keywords}style="display:none"{/if}>
+                	{foreach from=$searchkeywords item=val} <a href="search.php?keywords={$val|escape:url}" target="_blank">{$val}</a> {/foreach}
+                </div>
+                {/if}
+      		</form>
+        </div>
+    </div>
+	<div id="J_navMenu" class="header-nav-menu" style="display: none;">
+    	<div class="container"></div>
+    </div>
+</div>
+
+<!-- #EndLibraryItem --><div id="wrapper" class="container"><!-- #BeginLibraryItem "/library/ur_here.lbi" -->
+<div class="breadcrumbs">
+	<div class="container">
+    	{$ur_here}
+    </div>
+</div>
+<!-- #EndLibraryItem --><h5 style="margin-top:10px;"><span>{$lang.package_list}</span></h5>
+  <div class="blank"></div>
+   <!-- {foreach from=$list item=val} -->
+   <a name="{$val.act_id}"></a>
+  <table width="100%" border="0" cellpadding="5" cellspacing="1" bgcolor="#dddddd">
+    <tr>
+      <th bgcolor="#ffffff">{$lang.package_name}:</th>
+      <td colspan="3" bgcolor="#ffffff">{$val.act_name}</td>
+    </tr>
+    <tr>
+      <th bgcolor="#ffffff">{$lang.start_time}:</th>
+      <td width="200" bgcolor="#ffffff">{$val.start_time}</td>
+      <th bgcolor="#ffffff">{$lang.orgtotal}:</th>
+      <td bgcolor="#ffffff">{$val.subtotal}</td>
+    </tr>
+    <tr>
+      <th bgcolor="#ffffff">{$lang.end_time}:</th>
+      <td bgcolor="#ffffff">{$val.end_time}</td>
+      <th bgcolor="#ffffff">{$lang.package_price}:</th>
+      <td bgcolor="#ffffff">{$val.package_price}</td>
+    </tr>
+    <tr>
+      <th bgcolor="#ffffff">{$lang.heart_buy}:</th>
+      <td bgcolor="#ffffff"><a href="javascript:addPackageToCart({$val.act_id})" style="background:transparent"><img src="images/bnt_buy_1.gif" alt="{$lang.add_to_cart}" /></a></td>
+      <th bgcolor="#ffffff">{$lang.saving}:</th>
+      <td width="200" bgcolor="#ffffff">{$val.saving}</td>
+    </tr>
+    <tr>
+      <th bgcolor="#ffffff">{$lang.package_goods}:</th>
+      <td colspan="3" bgcolor="#ffffff">
+        <!-- {foreach from=$val.goods_list item=goods} -->
+        <a href="goods.php?id={$goods.goods_id}" target="_blank" class="f6"><span class="f_user_info"><u>{$goods.goods_name}</u></span></a> &nbsp;X &nbsp;{$goods.goods_number}<br />
+        <!-- {/foreach} -->
+      </td>
+    </tr>
+    <tr>
+      <th bgcolor="#ffffff">{$lang.desc}:</th>
+      <td colspan="3" bgcolor="#ffffff">{$val.act_desc}</td>
+    </tr>
+  </table>
+  <div class="blank5"></div><br />
+  <!-- {/foreach} -->
+</div><!-- #BeginLibraryItem "/library/page_footer.lbi" -->
+<div class="site-footer">
+	<div class="container">
+    	<div class="footer-service">
+        	<ul class="list-service clearfix">
+            	<li>
+                	<a rel="nofollow" href="javascript:void(0)">
+                    	<i class="iconfont"></i>1小时快修服务
+                    </a>
+                </li>
+            	<li>
+                	<a rel="nofollow" href="javascript:void(0)">
+                    	<i class="iconfont"></i>7天无理由退货
+                    </a>
+                </li>
+            	<li>
+                	<a rel="nofollow" href="javascript:void(0)">
+                    	<i class="iconfont"></i>15天免费换货
+                    </a>
+                </li>
+            	<li>
+                	<a rel="nofollow" href="javascript:void(0)">
+                    	<i class="iconfont"></i>满150元包邮
+                    </a>
+                </li>
+            	<li>
+                	<a rel="nofollow" href="javascript:void(0)">
+                    	<i class="iconfont"></i>520余家售后网点
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="footer-links clearfix">
+            {include file='library/help.lbi'}
+            <div class="col-contact">
+                <p class="phone">{$service_phone}</p>
+                <p>周一至周日 8:00-18:00<br>（仅收市话费）</p>
+     <!-- QQ 号码 {foreach from=$qq item=im} -->
+      <!-- {if $im} -->
+      
+                <a rel="nofollow" class="btn btn-line-primary btn-small"  href="http://wpa.qq.com/msgrd?V=1&amp;uin={$im}&amp;Site={$shop_name}&amp;Menu=yes" target="_blank">
+                    <i class="iconfont"></i> 24小时在线客服
+                </a>
+                <!-- {else} -->
+                 <a rel="nofollow" class="btn btn-line-primary btn-small"  href="http://wpa.qq.com/msgrd?V=1&uin=1152875929" target="_blank">
+                    <i class="iconfont"></i> 24小时在线客服
+                </a>
+                
+                <!-- {/if} -->
+      <!-- {/foreach} 结束QQ号码 -->
+            </div>
+        </div>
+    </div>
+</div>
+<div class="site-info">
+	<div class="container">
+    	<div class="logo ir">{$shop_name}</div>
+        <div class="info-text">
+        	<p class="sites">
+            	<!--开始文字类型的友情链接{foreach from=$txt_links item=link name=link}-->
+                <a href="{$link.url}" target="_blank" title="{$link.name}">{$link.name}</a>
+                <!-- {if !$smarty.foreach.link.last} -->
+                <span class="sep">|</span>
+                 <!-- {/if} -->
+                <!--结束文字类型的友情链接{/foreach}-->
+            </p>
+            <p>
+            	{$icp_number}    
+            </p>
+        </div>
+        <div class="info-links">
+        	<a href="#"><img src="http://s1.mi.com/zt/12052601/cnnicVerifyseal.png" alt="可信网站"></a>
+        	<a href="#"><img src="http://s1.mi.com/zt/12052601/szfwVerifyseal.gif" alt="诚信网站"></a>
+        	<a href="#"><img src="http://s1.mi.com/zt/12052601/save.jpg" alt="网上交易保障中心"></a>
+        </div>
+    </div>
+</div>
+<!-- #EndLibraryItem --></body>
+</html>
